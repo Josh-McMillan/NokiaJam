@@ -12,10 +12,7 @@ public class Movement : MonoBehaviour
 
     private Controls controls = null;
 
-    private void Awake()
-    {
-        controls = new Controls();
-    }
+    private void Awake() => controls = new Controls();
 
     private void Start()
     {
