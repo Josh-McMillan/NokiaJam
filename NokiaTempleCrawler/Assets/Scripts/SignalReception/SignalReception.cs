@@ -26,24 +26,9 @@ public class SignalReception : MonoBehaviour
 
     private float currentReceptionValue = 0.0f;
 
-    private void OnEnable()
-    {
-        OnSignalUpdated += EventTest;
-    }
-
-    private void OnDisable()
-    {
-        OnSignalUpdated -= EventTest;
-    }
-
     private void Update()
     {
         CheckReception();
-    }
-
-    private void EventTest(SignalStrength strength)
-    {
-        Debug.Log("RECEPTION UPDATED: " + strength.ToString());
     }
 
     private void CheckReception()
