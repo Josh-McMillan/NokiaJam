@@ -16,6 +16,8 @@ public class SignalReception : MonoBehaviour
 {
     public static event Action<SignalStrength> OnSignalUpdated;
 
+    public static Action<Vector3> OnLocationUpdated;
+
     [Header("Signal Distances")]
     [SerializeField] private float strongSignalDistance = 2.0f;
     [SerializeField] private float goodSignalDistance = 4.0f;
@@ -26,6 +28,18 @@ public class SignalReception : MonoBehaviour
 
     private float currentReceptionValue = 0.0f;
 
+    private Vector3 signalLocation = Vector3.zero;
+
+    private void OnEnable()
+    {
+        OnLocationUpdated += UpdateLocation;
+    }
+
+    private void OnDisable()
+    {
+        OnLocationUpdated -= UpdateLocation;
+    }
+
     private void Update()
     {
         CheckReception();
@@ -35,7 +49,7 @@ public class SignalReception : MonoBehaviour
     {
         SignalStrength previousStrength = currentStrength;
 
-        currentReceptionValue = Vector3.Distance(Vector3.zero, transform.position);
+        currentReceptionValue = Vector3.Distance(signalLocation, transform.position);
 
         if (currentReceptionValue < strongSignalDistance)
         {
@@ -62,5 +76,12 @@ public class SignalReception : MonoBehaviour
         {
             OnSignalUpdated(currentStrength);
         }
+    }
+
+    private void UpdateLocation(Vector3 newLocation)
+    {
+        Debug.Log("Signal Location changed to " + newLocation.ToString());
+
+        signalLocation = newLocation;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class MapGenerator : MonoBehaviour
     public char[,] Map;
 
     public string BoxCharacters;
+    public string RoomCharacters;
 
     private string[] boxCharacterUpFriends;
     private string[] boxCharacterDownFriends;
@@ -72,10 +74,45 @@ public class MapGenerator : MonoBehaviour
                 Map[r, c] = validCharacters[Random.Range(0, validCharacters.Length)];
             }
         }
-
-        // Create Elements Map
     }
 
+    public List<MapPosition> GenerateSpawnChoices()
+    {
+        List<MapPosition> spawnChoices = new List<MapPosition>();
+
+        for (int r = 1; r < MapRows - 1; r++)
+        {
+            for (int c = 1; c < MapColumns - 1; c++)
+            {
+                if (Map[r, c] == '┼')
+                {
+                    Debug.Log("Spawn choice found: " + r + "," + c);
+                    spawnChoices.Add(new MapPosition(r, c));
+                }
+            }
+        }
+
+        return spawnChoices;
+    }
+
+    public List<MapPosition> GenerateRoomChoices()
+    {
+        List<MapPosition> returnList = new List<MapPosition>();
+
+        for (int r = 1; r < MapRows - 1; r++)
+        {
+            for (int c = 1; c < MapColumns - 1; c++)
+            {
+                if (Map[r, c] == '├' || Map[r, c] == '┤' || Map[r, c] == '┬' || Map[r, c] == '┴')
+                {
+                    Debug.Log("Room Position Found: " + r + "," + c + " | Char: " + Map[r, c]);
+                    returnList.Add(new MapPosition(r, c));
+                }
+            }
+        }
+
+        return returnList;
+    }
 
     private string GetValidBoxCharacters(int row, int column)
     {
@@ -198,6 +235,7 @@ public class MapGenerator : MonoBehaviour
     public void InitializeBoxCharacters()
     {
         BoxCharacters = "─│┌┐└┘├┤┬┴┼";
+        RoomCharacters = "├┤┬┴";
         boxCharacterUpFriends = new string[BoxCharacters.Length];
         boxCharacterDownFriends = new string[BoxCharacters.Length];
         boxCharacterLeftFriends = new string[BoxCharacters.Length];
@@ -251,5 +289,4 @@ public class MapGenerator : MonoBehaviour
         boxCharacterDownFriends[9] = "O─┌┐┬X";
         boxCharacterDownFriends[10] = "O│└┘├┤┴┼";
     }
-
 }
