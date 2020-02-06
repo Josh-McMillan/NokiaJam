@@ -29,7 +29,15 @@ public class TempleGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject[] shapes;
 
+    [SerializeField] private GameObject caps;
+
     [SerializeField] private GameObject spawnShape;
+
+    [SerializeField] private GameObject endShape;
+
+    [SerializeField] private GameObject[] artifacts;
+
+    [SerializeField] private GameObject battery;
 
     [SerializeField] private float gridScale = 6.0f;
 
@@ -54,8 +62,9 @@ public class TempleGenerator : MonoBehaviour
         roomChoices = mapGenerator.GenerateRoomChoices();
 
         MapPosition spawnRoomChoice = new MapPosition(-1, -1);
+        MapPosition endRoomChoice = new MapPosition(-1, -1);
 
-        GenerateSpawnRoom(visitedCells, ref spawnRoomChoice);
+        GenerateSpawnRoom(visitedCells, ref spawnRoomChoice, ref endRoomChoice);
 
         mapGenerator.DisplayMap();
 
@@ -66,6 +75,11 @@ public class TempleGenerator : MonoBehaviour
                 string ch = mapGenerator.Map[r, c].ToString();
                 int charPos = mapGenerator.BoxCharacters.IndexOf(ch);
 
+                if (ch == "O")
+                {
+                    Instantiate(caps, new Vector3(c * gridScale + gridOffset, 0.0f, -r * gridScale - gridOffset), caps.transform.rotation, transform);
+                }
+
                 if (charPos < 0 || !visitedCells[r, c])
                 {
                     continue;
@@ -73,12 +87,41 @@ public class TempleGenerator : MonoBehaviour
 
                 if (r == spawnRoomChoice.R && c == spawnRoomChoice.C)
                 {
-                    Instantiate(spawnShape, new Vector3(c * gridScale + gridOffset, 0.0f, -r * gridScale - gridOffset), shapes[charPos].transform.rotation, transform);
+                    Instantiate(spawnShape, new Vector3(c * gridScale + gridOffset, 0.0f, -r * gridScale - gridOffset), spawnShape.transform.rotation, transform);
+                    continue;
+                }
+
+                if (r == endRoomChoice.R && c == endRoomChoice.C)
+                {
+                    Instantiate(endShape, new Vector3(c * gridScale + gridOffset, 0.0f, -r * gridScale - gridOffset), endShape.transform.rotation, transform);
                     continue;
                 }
 
                 Instantiate(shapes[charPos], new Vector3(c * gridScale + gridOffset, 0.0f, -r * gridScale - gridOffset), shapes[charPos].transform.rotation, transform);
             }
+        }
+
+        // Generate Pickups
+        List<MapPosition> shuffledRooms = roomChoices.OrderBy(x => Random.value).ToList();
+
+        for (int i = 0; i < 3; i++)
+        {
+            Debug.Log("Generating " + artifacts[i].name + " at " + shuffledRooms[i].R + "," + shuffledRooms[i].C);
+
+            Instantiate(artifacts[i], new Vector3(shuffledRooms[i].C * gridScale + gridOffset,
+                                                  0.0f,
+                                                  -shuffledRooms[i].R * gridScale + gridOffset),
+                        artifacts[i].transform.rotation, transform);
+        }
+
+        for (int i = 3; i < 6; i++)
+        {
+            Debug.Log("Generating Battery at " + shuffledRooms[i].R + "," + shuffledRooms[i].C);
+
+            Instantiate(battery, new Vector3(shuffledRooms[i].C * gridScale + gridOffset,
+                                             0.0f,
+                                             -shuffledRooms[i].R * gridScale + gridOffset),
+                        battery.transform.rotation, transform);
         }
     }
 
@@ -112,25 +155,50 @@ public class TempleGenerator : MonoBehaviour
         }
     }
 
-    private void GenerateSpawnRoom(bool[,] visitedCells, ref MapPosition choice)
+    private void GenerateSpawnRoom(bool[,] visitedCells, ref MapPosition spawnChoice, ref MapPosition endChoice)
     {
         bool spawnVisited = false;
 
-        List<MapPosition> spawnChoices = mapGenerator.GenerateSpawnChoices();
+        bool endVisited = false;
+
+        List<MapPosition> options = mapGenerator.GenerateSpawnChoices();
 
         while (!spawnVisited)
         {
-            choice = spawnChoices[Random.Range(0, spawnChoices.Count)];
+            spawnChoice = options[Random.Range(0, options.Count)];
 
-            if (visitedCells[choice.R, choice.C])
+            if (visitedCells[spawnChoice.R, spawnChoice.C])
             {
-                Debug.Log("Spawn location found: " + choice.R + "," + choice.C);
+                Debug.Log("Spawn location found: " + spawnChoice.R + "," + spawnChoice.C);
 
                 spawnVisited = true;
             }
             else
             {
-                Debug.Log("Spawn location (" + choice.R + "," + choice.C + ") invalid. Respawning.");
+                Debug.Log("Spawn location (" + spawnChoice.R + "," + spawnChoice.C + ") invalid. Regenerating.");
+            }
+        }
+
+        while (!endVisited)
+        {
+            endChoice = options[Random.Range(0, options.Count)];
+
+            if (visitedCells[endChoice.R, endChoice.C])
+            {
+                if (endChoice.R != spawnChoice.R && endChoice.C != spawnChoice.C)
+                {
+                    Debug.Log("End location found: " + endChoice.R + "," + endChoice.C);
+
+                    endVisited = true;
+                }
+                else
+                {
+                    Debug.Log("End location (" + endChoice.R + "," + endChoice.C + ") same as spawn. Regenerating.");
+                }
+            }
+            else
+            {
+                Debug.Log("End location (" + endChoice.R + "," + endChoice.C + ") invalid. Regenerating.");
             }
         }
     }

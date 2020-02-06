@@ -86,7 +86,7 @@ public class MapGenerator : MonoBehaviour
             {
                 if (Map[r, c] == '┼')
                 {
-                    Debug.Log("Spawn choice found: " + r + "," + c);
+                    // Debug.Log("Spawn choice found: " + r + "," + c);
                     spawnChoices.Add(new MapPosition(r, c));
                 }
             }
@@ -105,7 +105,7 @@ public class MapGenerator : MonoBehaviour
             {
                 if (Map[r, c] == '├' || Map[r, c] == '┤' || Map[r, c] == '┬' || Map[r, c] == '┴')
                 {
-                    Debug.Log("Room Position Found: " + r + "," + c + " | Char: " + Map[r, c]);
+                    // Debug.Log("Room Position Found: " + r + "," + c + " | Char: " + Map[r, c]);
                     returnList.Add(new MapPosition(r, c));
                 }
             }

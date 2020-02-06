@@ -7,7 +7,7 @@ public enum PickupType
 {
     NONE,
     BEETLE,
-    HEART,
+    CROSS,
     SCROLL,
     BATTERY
 }
@@ -17,13 +17,6 @@ public class Pickup : MonoBehaviour
     public static event Action<PickupType> OnPickupCollected;
 
     public PickupType pickupType;
-
-    private float rotationSpeed = 3.0f;
-
-    void Update()
-    {
-        transform.Rotate(0.0f, rotationSpeed, 0.0f);
-    }
 
     private void OnTriggerEnter(Collider other)
     {

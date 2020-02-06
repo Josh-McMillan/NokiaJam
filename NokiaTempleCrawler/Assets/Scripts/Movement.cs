@@ -12,6 +12,8 @@ public class Movement : MonoBehaviour
 
     private Controls controls = null;
 
+    private bool canMove = false;
+
     private void Awake() => controls = new Controls();
 
     private void Start()
@@ -19,14 +21,39 @@ public class Movement : MonoBehaviour
         controller = GetComponent<CharacterController>();
     }
 
-    private void OnEnable() => controls.Player.Enable();
+    private void OnEnable()
+    {
+        controls.Player.Enable();
+        GameManager.OnGameStart += StartMoving;
+        GameManager.OnPlayerDeath += StopMoving;
+        GameManager.OnGameWon += StopMoving;
+    }
 
-    private void OnDisable() => controls.Player.Disable();
+    private void OnDisable()
+    {
+        controls.Player.Disable();
+        GameManager.OnGameStart -= StopMoving;
+        GameManager.OnPlayerDeath -= StopMoving;
+        GameManager.OnGameWon -= StopMoving;
+    }
+
+    private void StartMoving()
+    {
+        canMove = true;
+    }
+
+    private void StopMoving()
+    {
+        canMove = false;
+    }
 
     private void Update()
     {
-        Rotate();
-        Move();
+        if (canMove)
+        {
+            Rotate();
+            Move();
+        }
     }
 
     private void Move()
@@ -59,5 +86,11 @@ public class Movement : MonoBehaviour
     public void SnapRight()
     {
         transform.Rotate(0.0f, 45.0f, 0.0f);
+    }
+
+    public void Quit()
+    {
+        Debug.Log("Quitting!");
+        Application.Quit();
     }
 }

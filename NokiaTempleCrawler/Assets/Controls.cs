@@ -49,6 +49,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Quit"",
+                    ""type"": ""Button"",
+                    ""id"": ""9ada4a2e-dba5-4f57-b202-698e2872456c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press""
                 }
             ],
             ""bindings"": [
@@ -227,6 +235,28 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""action"": ""SnapRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bd96d1d3-a21c-46c1-bc36-b4d73e7996a9"",
+                    ""path"": ""<Keyboard>/numpad0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Quit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""81c1488f-ca5e-420a-8332-7e9367b44ef8"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Quit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -239,6 +269,7 @@ public class @Controls : IInputActionCollection, IDisposable
         m_Player_Rotate = m_Player.FindAction("Rotate", throwIfNotFound: true);
         m_Player_SnapLeft = m_Player.FindAction("SnapLeft", throwIfNotFound: true);
         m_Player_SnapRight = m_Player.FindAction("SnapRight", throwIfNotFound: true);
+        m_Player_Quit = m_Player.FindAction("Quit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -292,6 +323,7 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Rotate;
     private readonly InputAction m_Player_SnapLeft;
     private readonly InputAction m_Player_SnapRight;
+    private readonly InputAction m_Player_Quit;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -300,6 +332,7 @@ public class @Controls : IInputActionCollection, IDisposable
         public InputAction @Rotate => m_Wrapper.m_Player_Rotate;
         public InputAction @SnapLeft => m_Wrapper.m_Player_SnapLeft;
         public InputAction @SnapRight => m_Wrapper.m_Player_SnapRight;
+        public InputAction @Quit => m_Wrapper.m_Player_Quit;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -321,6 +354,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @SnapRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapRight;
                 @SnapRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapRight;
                 @SnapRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapRight;
+                @Quit.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQuit;
+                @Quit.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQuit;
+                @Quit.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQuit;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -337,6 +373,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @SnapRight.started += instance.OnSnapRight;
                 @SnapRight.performed += instance.OnSnapRight;
                 @SnapRight.canceled += instance.OnSnapRight;
+                @Quit.started += instance.OnQuit;
+                @Quit.performed += instance.OnQuit;
+                @Quit.canceled += instance.OnQuit;
             }
         }
     }
@@ -347,5 +386,6 @@ public class @Controls : IInputActionCollection, IDisposable
         void OnRotate(InputAction.CallbackContext context);
         void OnSnapLeft(InputAction.CallbackContext context);
         void OnSnapRight(InputAction.CallbackContext context);
+        void OnQuit(InputAction.CallbackContext context);
     }
 }

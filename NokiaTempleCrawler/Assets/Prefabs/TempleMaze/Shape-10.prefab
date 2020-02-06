@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4505143088824316632}
   - component: {fileID: 4505143088824316635}
   m_Layer: 0
-  m_Name: Cross
+  m_Name: Shape-10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
